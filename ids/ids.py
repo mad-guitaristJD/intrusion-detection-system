@@ -1,15 +1,35 @@
 from scapy.all import sniff, IP, TCP, UDP, Raw
 import re
 import subprocess
+import requests
 from twilio.rest import Client
 
+TELEGRAM_BOT_TOKEN = ""
+TELEGRAM_CHAT_ID = ""
 
-ACCOUNT_SID = '[account sid]'
-AUTH_TOKEN = '[token]'
-TWILIO_WHATSAPP_NUMBER = "whatsapp:+14155238886"
-YOUR_WHATSAPP_NUMBER = "whatsapp:+[number]"
 
-client = Client(ACCOUNT_SID, AUTH_TOKEN)
+def send_telegram_alert(msg):
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
+    data = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": msg
+    }
+    try:
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            print(f"Telegram Alert Sent: {msg}")
+        else:
+            print(f"Failed to send Telegram alert: {response.text}")
+    except Exception as e:
+        print(f"Error sending Telegram alert: {e}")
+
+
+#ACCOUNT_SID = ''
+#AUTH_TOKEN = ''
+#TWILIO_WHATSAPP_NUMBER = "whatsapp:+"
+#YOUR_WHATSAPP_NUMBER = "whatsapp:+"
+
+#client = Client(ACCOUNT_SID, AUTH_TOKEN)
 
 def send_whatsapp_alert(message):
     try:
@@ -21,7 +41,6 @@ def send_whatsapp_alert(message):
         print(f"WhatsApp Alert Sent: {message}")
     except Exception as e:
         print(f"Error sending WhatsApp alert: {e}")
-
 
 
 # Load known attack signatures
@@ -52,15 +71,15 @@ def inspect_packet(packet):
             print(f"Payload: {payload}")
 
         if src_ip in MALICIOUS_IPS:
-            print(f"[ALERT] Malicious IP detected: {src_ip}")
             block_ip(src_ip)
-            send_whatsapp_alert(f"Blocked malicious IP: {src_ip}")
+            send_telegram_alert(f"Blocked malicious IP: {src_ip}")
+            print(f"[ALERT] Malicious IP detected: {src_ip}")
             return
 
         for attack, pattern in SIGNATURES.items():
             if re.search(pattern, str(payload)):
                 print(f"[ALERT] {attack} detected from {src_ip}")
-                send_whatsapp_alert(f"{attack} detected from {src_ip}")
+                send_telegram_alert(f"{attack} detected from {src_ip}")
                 return
 
 

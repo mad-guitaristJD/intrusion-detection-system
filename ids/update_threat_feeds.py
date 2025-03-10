@@ -19,7 +19,7 @@ def update_threat_db():
 		except Exception as e:
 			print(f"Error fetching {url}: {e}")
 
-	with open("ids/threat_db.txt", "w") as f:
+	with open("threat_db.txt", "w") as f:
 		for ip in malicious_ips:
 			f.write(ip + "\n")
 
