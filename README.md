@@ -42,7 +42,7 @@ sudo ids_venv/bin/python ids/ids.py
 
 - **Detection Logs**: Threats detected are logged for analysis.  
 - **Blocked Traffic**: Suspicious activity is logged and blocked.  
-- **WhatsApp & Telegram Alerts**: If an IP address is blocked, an alert message is sent via **WhatsApp or Telegram**. Configure this in `ids/config.py` by setting up the respective API keys.  
+- **WhatsApp & Telegram Alerts**: If an IP address is blocked, an alert message is sent via **WhatsApp or Telegram**. Configure this by setting up the respective API keys.  
 
 ## Contributing  
 
